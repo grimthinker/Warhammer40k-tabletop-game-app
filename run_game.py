@@ -5,7 +5,7 @@ from dc import GameParams
 from gamedata import GameData
 from main import GameLoop
 
-params = GameParams(FPS=FPS, SCREEN_WIDTH=SCREEN_WIDTH, SCREEN_HEIGHT=SCREEN_HEIGHT)
+params = GameParams(FPS=FPS, SCREEN_WIDTH=SCREEN_WIDTH, SCREEN_HEIGHT=SCREEN_HEIGHT, SCALE=SCALE)
 game = GameData()
 game_loop = GameLoop(game_params=params, game_data=game)
 

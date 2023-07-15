@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class GameParams:
     SCREEN_WIDTH: int
     SCREEN_HEIGHT: int
+    SCALE: int
     FPS: int
 
 

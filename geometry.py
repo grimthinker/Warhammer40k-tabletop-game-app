@@ -10,15 +10,17 @@ class BaseObject:
             self,
             color: tuple[int, int, int],
             position: tuple[int, int],
+            position_z: int = 0,
             line_wide: int = 1,
             model: BaseModel | None = None
     ):
         self.color = color
         self.position = position
+        self.position_z = position_z
         self.line_wide = line_wide
         self.model = model
         self.dragging = False
-        self.dragging_line = Line | None
+        self.dragging_line: Line | None = None
         self.to_draw = True
 
     @property
@@ -26,6 +28,17 @@ class BaseObject:
         if self.model:
             return self.model.draggable
         return False
+
+    def check_move(self, scale: int):
+        if self.model:
+            move = self.model.model_profile.M * scale
+        else:
+            return False
+        if self.dragging_line:
+            length = self.dragging_line.length
+        else:
+            return False
+        return move <= length
 
     def draw(self, screen: Surface | SurfaceType):
         raise NotImplemented
@@ -59,6 +72,14 @@ class Line(BaseObject):
 
     def set_pos(self, position: tuple[int, int], use_offset=False):
         self.end = position  # Only changes the end point of the line. Offset is not applied
+
+    @property
+    def length(self):
+        start_x, start_y = self.position
+        end_x, end_y = self.end
+        offset = Offset(end_x - start_x, end_y - start_y)
+        return offset.distance
+
 
 
 class Circle(BaseObject):

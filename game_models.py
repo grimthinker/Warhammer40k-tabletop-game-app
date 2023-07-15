@@ -48,9 +48,9 @@ class ModelProfile:
 class BaseModel:
     def __init__(
             self,
-            model_index: ModelProfile,
+            model_profile: ModelProfile,
             draggable: bool = False
     ):
-        self.model_index = model_index
+        self.model_profile = model_profile
         self.draggable = draggable
 
