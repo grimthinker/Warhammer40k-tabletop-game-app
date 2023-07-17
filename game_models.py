@@ -12,7 +12,7 @@ class WeaponBase:
     S: int = 1  # Strength
     AP: int = 0  # Armour penetration
     D: int = 1  # Damage
-    shot_limit: int | None = None
+    use_limit: int | None = None
 
 
 @dataclass
@@ -27,8 +27,18 @@ class MeleeWeapon(WeaponBase):
 
 
 @dataclass
+class RangeWeaponData(RangedWeapon):
+    use_number: int = 0
+
+
+@dataclass
+class MeleeWeaponData(MeleeWeapon):
+    use_number: int = 0
+
+
+@dataclass
 class ModelProfile:
-    M: int = 1  # Move
+    M: int = 4  # Move
     T: int = 1  # Toughness
     Sv: int = 6  # Save
     InvSv: int | None = None  # Invulnerable save
@@ -41,16 +51,35 @@ class ModelProfile:
     keywords: list[str] = field(default_factory=list)
     faction_keywords: list[str] = field(default_factory=list)
     wargear_options: list[str] = field(default_factory=list)
-    wargear: str | None = None
     leader: list['ModelProfile'] = field(default_factory=list)
+
+    base: bool = True  # If True, model has a base. If False, model is represented as a Rectangle using length and width
+    base_diameter: float = 1
+    length: int | None = 1
+    width: int | None = 1
+
+
+@dataclass
+class ModelData:
+    M: int = 4  # Current Move
+    T: int = 1  # Current Toughness
+    Sv: int = 6  # Current Save
+    W: int = 1  # Current Wounds
+    LD: int = 1  # Current Leadership
+    OK: int = 1  # Current Objective control
+    ranged_weapons: list[RangeWeaponData] = field(default_factory=list)  # Current Weapons
+    melee_weapons: list[MeleeWeaponData] = field(default_factory=list)
+    wargear: str | None = None  # Current wargear
 
 
 class BaseModel:
     def __init__(
             self,
-            model_profile: ModelProfile,
+            profile: ModelProfile,
+            data: ModelData,
             draggable: bool = False
     ):
-        self.model_profile = model_profile
+        self.profile = profile
+        self.data = data
         self.draggable = draggable
 
