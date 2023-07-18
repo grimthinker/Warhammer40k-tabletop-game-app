@@ -12,12 +12,15 @@ if TYPE_CHECKING:
 GameObject = BaseObject | Line | Circle
 
 index = ModelProfile()
+index2 = ModelProfile(base_diameter=3)
 data = ModelData()
 model = BaseModel(index, draggable=True, data=data)
+model2 = BaseModel(index2, draggable=True, data=data)
+
 
 test_data = [
     Circle(color=RED, position=(4, 4), model=model),
-    Circle(color=RED, position=(2, 8), model=model),
+    Circle(color=RED, position=(7.625, 6.125), model=model2),
     Line(color=BLUE, position=(3, 7), end=(7, 5))]
 
 

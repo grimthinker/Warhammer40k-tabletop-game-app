@@ -50,8 +50,8 @@ class GameLogic:
             available_pos = dragged_obj.noncollide_position(collided_object, distance)
             self.loop.dragged_obj.set_pos(available_pos, use_offset=False)
             self.loop.dragged_obj.dragging_line.set_pos(self.loop.dragged_obj.position)
-        except Exception:  # Occasional math errors when trying to correct position. Maybe just pass them?
-            pass
+        except ValueError as e:  # Occasional math errors when trying to correct position. Maybe just pass them?
+            print(e)
 
 
 

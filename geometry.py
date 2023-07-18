@@ -5,7 +5,7 @@ from pygame import Surface, SurfaceType
 
 from dc import Position, Offset
 from game_models import BaseModel
-from utils import length, distance_w, find_correction
+from utils import length, distance_w, find_correction, find_correction_circle
 
 if TYPE_CHECKING:
     from main import GameLoop
@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 class BaseObject:
     def __init__(
             self,
-            color: tuple[int, int, int],
             position: tuple[int, int],
+            color: tuple[int, int, int] = (0, 0, 0),
             position_z: int = 0,
             line_wide: int = 1,
             model: BaseModel | None = None
@@ -70,7 +70,7 @@ class BaseObject:
     def correct_length_move(self, correct_length: int | None = None):
         move = correct_length if correct_length else self.model.profile.M
         length = self.dragging_line.length
-        m = move / length
+        m = move / (length + 0.00001)
         start_x, start_y = self.dragging_line.position
         end_x, end_y = self.dragging_line.end
         d_x = end_x - start_x
@@ -78,13 +78,16 @@ class BaseObject:
         return [(start_x + d_x * m), (start_y + d_y * m)]
 
     def noncollide_position(self, collided_object, current_distance):
-        correct_length = 0
+        correct_length_move = 0
         if isinstance(self, Circle) and isinstance(collided_object, Line):
             over = self.radius - current_distance
             correction = find_correction(over, self.dragging_line, collided_object)
-            correct_length = self.dragging_line.length - abs(correction)
-        return self.correct_length_move(correct_length)
-
+            correct_length_move = self.dragging_line.length - abs(correction)
+        if isinstance(self, Circle) and isinstance(collided_object, Circle):
+            error = self.radius + collided_object.radius - current_distance
+            correction = find_correction_circle(error, self.radius, collided_object.radius)
+            correct_length_move = self.dragging_line.length - abs(correction)
+        return self.correct_length_move(correct_length_move)
 
 
 
@@ -129,7 +132,7 @@ class Circle(BaseObject):
         self.radius = self.size
 
 
-    def set_pos(self, position: tuple[int, int], use_offset=False):
+    def set_pos(self, position: tuple[float, float], use_offset=False):
         point_x, point_y = position
         if use_offset:
             self.position = (point_x + self.offset.x, point_y + self.offset.y)
