@@ -59,11 +59,22 @@ def ang(vA: tuple[float, float], vB: tuple[float, float]):
 
 
 def find_angle(A: 'Line', B: 'Line'):
-
     vA = A.vector
     vB = B.vector
     angle = ang(vA, vB)
     return angle
+
+
+def check_intersection(A: 'Line', B: 'Line'):
+    ax1, ay1 = A.start
+    ax2, ay2 = A.end
+    bx1, by1 = B.start
+    bx2, by2 = B.end
+    v1 = (bx2-bx1) * (ay1-by1) - (by2-by1) * (ax1-bx1)
+    v2 = (bx2-bx1) * (ay2-by1) - (by2-by1) * (ax2-bx1)
+    v3 = (ax2-ax1) * (by1-ay1) - (ay2-ay1) * (bx1-ax1)
+    v4 = (ax2-ax1) * (by2-ay1) - (ay2-ay1) * (bx2-ax1)
+    return v1 * v2 < 0 and v3 * v4 < 0
 
 
 def find_correction_circle(error: float, radiusA: float, radiusB: float):

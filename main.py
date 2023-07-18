@@ -99,6 +99,7 @@ class GameLoop:
                 pass
             for obj in self.game_data.game_objects:
                 if obj.check_point(event.pos) and obj.draggable:
+                    # pygame.mouse.set_visible(False)
                     obj.dragging = True
                     self.dragged_obj: GameObject = obj
                     data = DragData(obj, start_pos=obj.position, start_pos_z=obj.position_z)
@@ -112,6 +113,7 @@ class GameLoop:
     def handle_main_mouse_up(self, event):
         if self.current_action:
             if self.current_action.type == ActionTypes.DRAGGING_MODEL:
+                # pygame.mouse.set_visible(True)
                 self.dragged_obj.dragging = False
                 self.game_data.game_objects.remove(self.dragged_obj.dragging_line)
                 self.current_action.data.end_pos = self.dragged_obj.position
@@ -129,10 +131,11 @@ class GameLoop:
                 self.logic.set_dragged_obj_position(event.pos)
                 if not self.logic.check_move_length(self.dragged_obj):
                     self.logic.set_with_available_move(self.dragged_obj)
-
-                collided = self.logic.find_collided(self.dragged_obj)
-                for collided_object, distance in collided:
-                    self.logic.set_with_noncollide_position(self.dragged_obj, collided_object, event.pos)
+                self.logic.set_with_noncollide_position(
+                    self.dragged_obj,
+                    event.pos,
+                    self.game_data.game_objects,
+                )
 
             elif self.current_action.type == ActionTypes.DRAGGING_CAMERA:
                 self.camera.drag(new_screen_pos)

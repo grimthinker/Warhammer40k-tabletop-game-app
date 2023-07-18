@@ -15,14 +15,14 @@ class GameLogic:
 
     def check_move_length(self, dragged_obj: GameObject) -> bool:
         if dragged_obj.model:
-            move = dragged_obj.model.data.M
+            available_move = dragged_obj.model.data.M
         else:
             return False
         if dragged_obj.dragging_line:
             length = dragged_obj.dragging_line.length
         else:
             return False
-        return move >= length
+        return available_move >= length
 
 
     def find_collided(self, obj: GameObject):
@@ -46,11 +46,12 @@ class GameLogic:
     def set_with_noncollide_position(
             self,
             dragged_obj: GameObject,
-            collided_object: GameObject,
-            proposed_pos: tuple[float, float]
+            proposed_pos: tuple[float, float],
+            objects: list[GameObject],
+            correct_up: bool = True
     ):
         """Сдвигает передвигаемый объект ближе к изначальной точке так, чтобы не было пересечения с collided_object"""
-        dragged_obj.set_with_noncollide_position(collided_object, proposed_pos)
+        return dragged_obj.set_with_noncollide_position(proposed_pos, objects)
 
 
 

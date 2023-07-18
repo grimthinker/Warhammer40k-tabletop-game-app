@@ -38,7 +38,7 @@ class MeleeWeaponData(MeleeWeapon):
 
 @dataclass
 class ModelProfile:
-    M: int = 4  # Move
+    M: int = 6  # Move
     T: int = 1  # Toughness
     Sv: int = 6  # Save
     InvSv: int | None = None  # Invulnerable save
@@ -61,7 +61,7 @@ class ModelProfile:
 
 @dataclass
 class ModelData:
-    M: int = 4  # Current Move
+    M: int = 6  # Current Move
     T: int = 1  # Current Toughness
     Sv: int = 6  # Current Save
     W: int = 1  # Current Wounds
