@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 
 
 class GameInterface:
-    def __init__(self, loop: 'GameLoop'):
+    def __init__(self, loop: 'GameLoop', elements: list | None = None):
         self.loop = loop
+        self.elements = elements if elements else list()
 

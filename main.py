@@ -10,7 +10,7 @@ from event_checker import EventChecker
 from gamedata import GameData, GameObject
 from grafics import DrawingMaker
 from interface import GameInterface
-from logic import GameLogic
+from logic.logic import GameLogic
 from utils import to_real_scale, to_screen_scale
 
 clock = pygame.time.Clock()
@@ -122,17 +122,17 @@ class GameLoop:
                 self.dragged_obj = None
 
 
-    def handle_mouse_motion(self, event):
+    def handle_mouse_motion(self, event: ControlEvent):
         new_screen_pos = to_screen_scale(event.pos, self.camera.scale, *self.camera.pos)
         if self.check_mouse_inside(new_screen_pos) and self.current_action:
             if self.current_action.type == ActionTypes.DRAGGING_MODEL:
                 self.logic.set_dragged_obj_position(event.pos)
                 if not self.logic.check_move_length(self.dragged_obj):
                     self.logic.set_with_available_move(self.dragged_obj)
-                for _ in range(350):
-                    collided = self.logic.find_collided(self.dragged_obj)
-                    for collided_object, distance in collided:
-                        self.logic.set_with_noncollide_position(self.dragged_obj, collided_object, distance)
+
+                collided = self.logic.find_collided(self.dragged_obj)
+                for collided_object, distance in collided:
+                    self.logic.set_with_noncollide_position(self.dragged_obj, collided_object, event.pos)
 
             elif self.current_action.type == ActionTypes.DRAGGING_CAMERA:
                 self.camera.drag(new_screen_pos)

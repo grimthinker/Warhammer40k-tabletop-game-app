@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 
 from gamedata import GameObject
-from geometry import Circle, Rectangle, Line
 from utils import distance_w
 
 if TYPE_CHECKING:
@@ -44,14 +43,14 @@ class GameLogic:
 
 
 
-    def set_with_noncollide_position(self, dragged_obj: GameObject, collided_object: GameObject, distance: int | float):
+    def set_with_noncollide_position(
+            self,
+            dragged_obj: GameObject,
+            collided_object: GameObject,
+            proposed_pos: tuple[float, float]
+    ):
         """Сдвигает передвигаемый объект ближе к изначальной точке так, чтобы не было пересечения с collided_object"""
-        try:
-            available_pos = dragged_obj.noncollide_position(collided_object, distance)
-            self.loop.dragged_obj.set_pos(available_pos, use_offset=False)
-            self.loop.dragged_obj.dragging_line.set_pos(self.loop.dragged_obj.position)
-        except ValueError as e:  # Occasional math errors when trying to correct position. Maybe just pass them?
-            print(e)
+        dragged_obj.set_with_noncollide_position(collided_object, proposed_pos)
 
 
 

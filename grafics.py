@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from geometry import Circle, Line
+from geometry.base import Circle, Line
 from utils import to_screen_scale
 
 if TYPE_CHECKING:

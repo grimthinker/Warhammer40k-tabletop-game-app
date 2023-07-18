@@ -2,14 +2,15 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from game_models import ModelProfile, ModelData
-from geometry import Circle, BaseObject, BaseModel, Line
+from game_models import ModelProfile, ModelData, BaseModel
 from data import RED, BLUE, BLACK
+from geometry.base import BaseObject
+from geometry.collision import LineWithCollision, CircleWithCollision
 
 if TYPE_CHECKING:
     from dc import Offset, Position, GameParams
 
-GameObject = BaseObject | Line | Circle
+GameObject = BaseObject | LineWithCollision | CircleWithCollision
 
 index = ModelProfile()
 index2 = ModelProfile(base_diameter=3)
@@ -19,9 +20,9 @@ model2 = BaseModel(index2, draggable=True, data=data)
 
 
 test_data = [
-    Circle(color=RED, position=(4, 4), model=model),
-    Circle(color=RED, position=(7.625, 6.125), model=model2),
-    Line(color=BLUE, position=(3, 7), end=(7, 5))]
+    CircleWithCollision(color=RED, position=(4, 4), model=model),
+    CircleWithCollision(color=RED, position=(7.625, 6.125), model=model2),
+    LineWithCollision(color=BLUE, position=0, start=(3, 7), end=(7, 5))]
 
 
 class GameData:
@@ -36,8 +37,8 @@ class GameData:
         TR = (0, self.size_y)
         BR = (self.size_x, self.size_y)
         BL = (self.size_x, 0)
-        top = Line(color=BLACK, position=TL, end=TR)
-        bottom = Line(color=BLACK, position=BR, end=BL)
-        left = Line(color=BLACK, position=TL, end=BL)
-        right = Line(color=BLACK, position=BR, end=TR)
+        top = LineWithCollision(color=BLACK, position=0, start=TL, end=TR)
+        bottom = LineWithCollision(color=BLACK, position=0, start=BR, end=BL)
+        left = LineWithCollision(color=BLACK, position=0, start=TL, end=BL)
+        right = LineWithCollision(color=BLACK, position=0, start=BR, end=TR)
         self.game_objects.extend((top, bottom, left, right))

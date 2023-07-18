@@ -51,19 +51,19 @@ def ang(vA: tuple[float, float], vB: tuple[float, float]):
     magB = dot(vB, vB)**0.5 + 0.00001
     cos_ = dot_prod / magA / magB
     angle = math.acos(cos_)
-    ang_deg = math.degrees(angle) % 180
-    if ang_deg - 90 >= 0:
-        return math.pi/2 - angle
+    ang_deg = math.degrees(angle) % 360
+    if ang_deg - 180 >= 0:
+        return math.pi - angle
     else:
         return angle
 
 
-def find_correction(error: float, A: 'Line', B: 'Line'):
+def find_angle(A: 'Line', B: 'Line'):
+
     vA = A.vector
     vB = B.vector
     angle = ang(vA, vB)
-    correction = error * (math.cos(angle) + error * 0.01) * 1.002
-    return correction
+    return angle
 
 
 def find_correction_circle(error: float, radiusA: float, radiusB: float):

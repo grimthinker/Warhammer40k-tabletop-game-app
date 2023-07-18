@@ -1,3 +1,4 @@
+import math
 from typing import TYPE_CHECKING
 
 import pygame
@@ -5,7 +6,7 @@ from pygame import Surface, SurfaceType
 
 from dc import Position, Offset
 from game_models import BaseModel
-from utils import length, distance_w, find_correction, find_correction_circle
+from utils import length, distance_w, find_correction_circle, find_angle
 
 if TYPE_CHECKING:
     from main import GameLoop
@@ -53,48 +54,11 @@ class BaseObject:
         raise NotImplemented
 
 
-    def check_collision(self, another_obj: 'BaseObject'):
-        current_distance = 0
-        limit = 10000
-        if isinstance(another_obj, Line) and isinstance(self, Circle):
-            limit = self.radius
-            current_distance = distance_w(another_obj.position, another_obj.end, self.position)
-        if isinstance(another_obj, Circle) and isinstance(self, Circle):
-            limit = another_obj.radius + self.radius
-            current_distance = length(another_obj.position, self.position)
-        if isinstance(another_obj, Rectangle) and isinstance(self, Circle):
-            for line in another_obj.lines:
-                pass
-        return current_distance <= limit, current_distance
-
-    def correct_length_move(self, correct_length: int | None = None):
-        move = correct_length if correct_length else self.model.profile.M
-        length = self.dragging_line.length
-        m = move / (length + 0.00001)
-        start_x, start_y = self.dragging_line.position
-        end_x, end_y = self.dragging_line.end
-        d_x = end_x - start_x
-        d_y = end_y - start_y
-        return [(start_x + d_x * m), (start_y + d_y * m)]
-
-    def noncollide_position(self, collided_object, current_distance):
-        correct_length_move = 0
-        if isinstance(self, Circle) and isinstance(collided_object, Line):
-            over = self.radius - current_distance
-            correction = find_correction(over, self.dragging_line, collided_object)
-            correct_length_move = self.dragging_line.length - abs(correction)
-        if isinstance(self, Circle) and isinstance(collided_object, Circle):
-            error = self.radius + collided_object.radius - current_distance
-            correction = find_correction_circle(error, self.radius, collided_object.radius)
-            correct_length_move = self.dragging_line.length - abs(correction)
-        return self.correct_length_move(correct_length_move)
-
-
-
 class Line(BaseObject):
-    def __init__(self, end: tuple[float, float], **kwargs):
+    def __init__(self, start: tuple[float, float], end: tuple[float, float], **kwargs):
         super().__init__(**kwargs)
-        self.start = self.position
+        self.start = start
+        self.position = self.start
         self.end = end
 
     def check_point(self, position: tuple[float, float]):
@@ -150,5 +114,6 @@ class Circle(BaseObject):
             return False
 
     def make_dragging_line(self, color: tuple[int, int, int], position: tuple[int, int]):
-        self.dragging_line = Line(color=color, position=position, end=position)
+        self.dragging_line = Line(color=color, position=position, start=position, end=position)
         return self.dragging_line
+
