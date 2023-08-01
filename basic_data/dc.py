@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from pygame.key import ScancodeWrapper
 
-from enums import ControlEventTypes
+from basic_data.enums import ControlEventTypes
 
 
 @dataclass
@@ -37,6 +37,12 @@ class ControlEvent:
     pos: tuple[float, float]
     type: ControlEventTypes
     data: str | float | dict
+    mouse_motion: bool
     keys: ScancodeWrapper
     mouse_pos: tuple[int, int]
 
+
+@dataclass
+class PlayerProfile:
+    nickname: str
+    password: str = ''

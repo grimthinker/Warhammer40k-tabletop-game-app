@@ -1,12 +1,7 @@
-import math
 from typing import TYPE_CHECKING
 
-import pygame
-from pygame import Surface, SurfaceType
-
-from dc import Position, Offset
-from game_models import BaseModel
-from utils import length, distance_w, find_correction_circle, find_angle
+from basic_data.dc import Offset
+from utils import length
 
 if TYPE_CHECKING:
     from main import GameLoop
@@ -19,7 +14,8 @@ class BaseObject:
             color: tuple[int, int, int] = (0, 0, 0),
             position_z: int = 0,
             line_wide: int = 1,
-            model: BaseModel | None = None
+            model: 'GameModel | TerrainModel | None' = None,
+            size: float = 0
     ):
         self.color = color
         self.position = position
@@ -27,13 +23,33 @@ class BaseObject:
         self.line_wide = line_wide
         self.model = model
         self.dragging = False
-        self.dragging_line: Line | None = None
+        self.dragging_lines: list[Line] = list()
+        self.last_move_line: Line | None = None
+        self.move_lines: list[Line] = list()
         self.to_draw = True
-        if model:
-            self.size = model.profile.base_diameter / 2
-        else:
-            self.size = 0
+        self.size = size
 
+    @property
+    def last_dragging_line(self):
+        return self.dragging_lines[-1]
+
+    @property
+    def owner(self):
+        if self.model:
+            return self.model.owner
+        return None
+
+    @property
+    def passable(self):
+        if self.model:
+            return self.model.passable
+        return False
+
+    @property
+    def can_be_stood_on(self):
+        if self.model:
+            return self.model.can_be_stood_on
+        return False
     @property
     def draggable(self):
         if self.model:
@@ -83,9 +99,10 @@ class Line(BaseObject):
 
 
 class Rectangle(BaseObject):
-    def __init__(self, angle, **kwargs):
+    def __init__(self, angle: float = 0, **kwargs):
         super().__init__(**kwargs)
         self.angle: float = angle
+        self.lines: list[Line] = []
 
 
 
@@ -114,6 +131,7 @@ class Circle(BaseObject):
             return False
 
     def make_dragging_line(self, color: tuple[int, int, int], position: tuple[int, int]):
-        self.dragging_line = Line(color=color, position=position, start=position, end=position)
-        return self.dragging_line
+        line = Line(color=color, position=position, start=position, end=position)
+        self.dragging_lines.append(line)
+        return line
 

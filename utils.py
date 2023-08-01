@@ -1,19 +1,24 @@
 import math
 from typing import TYPE_CHECKING
+import numpy
 
-from dc import Position, Offset
+from basic_data.dc import Offset
 
 
 if TYPE_CHECKING:
-    from geometry import Line, Circle
+    from geometry import Line
 
 
-def to_real_scale(pos, scale, offset_x, offset_y):
+def to_real_scale(pos, scale, offset_x, offset_y, angle):
     x, y = pos
-    return (x + offset_x) / scale, (y + offset_y) / scale
+    cx, cy = (x + offset_x) / scale, (y + offset_y) / scale
+    pos = numpy.array([cx, cy])
+    x, y = numpy.dot(pos, rot_matrix(-angle))
+    return x, y
 
-def to_screen_scale(pos, scale, offset_x, offset_y):
-    x, y = pos
+def to_screen_scale(pos, scale, offset_x, offset_y, angle):
+    pos = numpy.array(pos)
+    x, y = numpy.dot(pos, rot_matrix(angle))
     return scale * x - offset_x, scale * y - offset_y
 
 def length(a_pos, b_pos):
@@ -80,4 +85,8 @@ def check_intersection(A: 'Line', B: 'Line'):
 def find_correction_circle(error: float, radiusA: float, radiusB: float):
     correction = error * 0.2 * ((radiusA + radiusB) / radiusB)
     return correction
+
+def rot_matrix(theta):
+    return numpy.array([[numpy.cos(theta), -numpy.sin(theta)],
+                                   [numpy.sin(theta), numpy.cos(theta)]])
 

@@ -36,6 +36,25 @@ class MeleeWeaponData(MeleeWeapon):
     use_number: int = 0
 
 
+class Rule:
+    pass
+
+
+@dataclass
+class GeometryData:
+    forms: list
+
+
+@dataclass
+class TerrainProfile:
+    H: float
+    passable: bool
+    can_be_stood_on: bool
+    visibility_rule: Rule
+    cover_rule: Rule
+    geometry_data: GeometryData
+
+
 @dataclass
 class ModelProfile:
     M: int = 6  # Move
@@ -57,6 +76,8 @@ class ModelProfile:
     base_diameter: float = 1
     length: int | None = 1
     width: int | None = 1
+    passable: bool = False
+    can_be_stood_on: bool = False
 
 
 @dataclass
@@ -70,16 +91,3 @@ class ModelData:
     ranged_weapons: list[RangeWeaponData] = field(default_factory=list)  # Current Weapons
     melee_weapons: list[MeleeWeaponData] = field(default_factory=list)
     wargear: str | None = None  # Current wargear
-
-
-class BaseModel:
-    def __init__(
-            self,
-            profile: ModelProfile,
-            data: ModelData,
-            draggable: bool = False
-    ):
-        self.profile = profile
-        self.data = data
-        self.draggable = draggable
-

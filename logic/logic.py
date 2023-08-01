@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from gamedata import GameObject
 from utils import distance_w
 
 if TYPE_CHECKING:
@@ -13,22 +12,22 @@ class GameLogic:
         self.graphics = self.loop.graphics
 
 
-    def check_move_length(self, dragged_obj: GameObject) -> bool:
+    def check_move_length(self, dragged_obj) -> bool:
         if dragged_obj.model:
             available_move = dragged_obj.model.data.M
         else:
             return False
-        if dragged_obj.dragging_line:
-            length = dragged_obj.dragging_line.length
+        if dragged_obj.last_dragging_line:
+            length = dragged_obj.last_dragging_line.length
         else:
             return False
         return available_move >= length
 
 
-    def find_collided(self, obj: GameObject):
+    def find_collided(self, obj):
         collided = []
-        for another_obj in self.loop.game_data.game_objects:
-            if another_obj == obj or another_obj == obj.dragging_line:
+        for another_obj in self.loop.game_data.objects:
+            if another_obj == obj or another_obj == obj.last_dragging_line:
                 continue
             collision, distance = obj.check_collision(another_obj)
             if collision:
@@ -36,18 +35,18 @@ class GameLogic:
         return collided
 
 
-    def set_with_available_move(self, dragged_obj: GameObject):
+    def set_with_available_move(self, dragged_obj):
         available_pos = dragged_obj.correct_length_move()
         self.loop.dragged_obj.set_pos(available_pos, use_offset=False)
-        self.loop.dragged_obj.dragging_line.set_pos(self.loop.dragged_obj.position)
+        self.loop.dragged_obj.last_dragging_line.set_pos(self.loop.dragged_obj.position)
 
 
 
     def set_with_noncollide_position(
             self,
-            dragged_obj: GameObject,
+            dragged_obj,
             proposed_pos: tuple[float, float],
-            objects: list[GameObject],
+            objects: list,
             correct_up: bool = True
     ):
         """Сдвигает передвигаемый объект ближе к изначальной точке так, чтобы не было пересечения с collided_object"""
@@ -57,7 +56,7 @@ class GameLogic:
 
     def set_dragged_obj_position(self, pos):
         self.loop.dragged_obj.set_pos(pos, use_offset=True)
-        self.loop.dragged_obj.dragging_line.set_pos(self.loop.dragged_obj.position)
+        self.loop.dragged_obj.last_dragging_line.set_pos(self.loop.dragged_obj.position)
 
 
 

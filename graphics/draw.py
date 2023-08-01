@@ -14,18 +14,18 @@ class DrawingMaker:
         self.loop = loop
 
 
-    def draw(self, obj):
+    def draw(self, obj, camera):
         screen = self.loop.screen
-        scale = self.loop.camera.scale
-        camera = self.loop.camera
+        scale = camera.scale
         if isinstance(obj, Circle):
+
             size = obj.radius * scale
-            position = to_screen_scale(obj.position, scale, *camera.pos)
+            position = to_screen_scale(obj.position, scale, *camera.pos, camera.angle)
             pygame.draw.circle(screen, obj.color, position, size, obj.line_wide)
 
         if isinstance(obj, Line):
-            start = to_screen_scale(obj.start, scale, *camera.pos)
-            end = to_screen_scale(obj.end, scale, *camera.pos)
+            start = to_screen_scale(obj.start, scale, *camera.pos, camera.angle)
+            end = to_screen_scale(obj.end, scale, *camera.pos, camera.angle)
             pygame.draw.line(
                 screen,
                 obj.color,
@@ -34,7 +34,10 @@ class DrawingMaker:
                 obj.line_wide
             )
 
-    def draw_all(self):
-        for obj in self.loop.game_data.game_objects:
-            self.draw(obj)
+    def draw_all(self, camera):
+        for obj in self.loop.gamedata.objects:
+            self.draw(obj, camera)
+
+        for element in self.loop.interface.elements.all:
+            self.draw(element, camera)
 

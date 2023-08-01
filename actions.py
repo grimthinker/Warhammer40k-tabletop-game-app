@@ -1,7 +1,8 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from enums import ActionTypes
-from gamedata import GameObject
+from pygame.examples.moveit import GameObject
+
+from basic_data.enums import ActionTypes
 
 
 @dataclass
