@@ -52,8 +52,7 @@ class GameCamera:
         self.pos = x - dx, y - dy
         self.drag_anchor = new_pos
 
-    def rotate(self, event, center):
-        print(self.rotate_anchor)
+    def rotate(self, event):
         cx, cy = to_real_scale(self.rotate_anchor, self.scale, *self.pos, self.angle)
         dx = (self.rotate_zero - event.mouse_pos[0]) * ROTATE_SPEED
         self.rotate_zero = event.mouse_pos[0]

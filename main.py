@@ -7,10 +7,13 @@ from config import ZOOM_TOP_SPEED
 from gamedata import GameData
 from basic_data.source import *
 from basic_data.dc import GameParams, ControlEvent, PlayerProfile
-from basic_data.enums import ActionTypes, ControlEventTypes, MODE_NAMES, GAME_SETTINGS_MODE
+from basic_data.enums import ActionTypes, ControlEventTypes, MODE_NAMES, GAME_SETTINGS_MODE, GAME_STATE_NAMES, \
+    BATTLE_PHASE_NAMES
+from logic.collision import CollisionMixin
 from logic.event_checker import EventChecker
 from graphics.draw import DrawingMaker
 from interface import GameInterface
+from logic.handlers import Handlers
 from logic.logic import GameLogic
 from utils import to_screen_scale
 
@@ -23,6 +26,7 @@ class GameLoop:
         self.player_profile = player_profile
         self.params = game_params
         self.event_checker = EventChecker(self)
+        self.handlers = Handlers(self)
         self.graphics = DrawingMaker(self)
         self.logic = GameLogic(self)
         self.interface = GameInterface(self)
@@ -33,7 +37,7 @@ class GameLoop:
         pygame.init()
         self.screen = pygame.display.set_mode((game_params.SCREEN_WIDTH, game_params.SCREEN_HEIGHT))
         pygame.display.set_caption("Game")
-        self.dragged_obj = None
+        self.dragged_obj: CollisionMixin | None = None
         self.current_action: Action | None = None
         self.actions = []
 
@@ -50,11 +54,12 @@ class GameLoop:
 
     def run(self):
         while self.running:
+            game_handler = self.choose_handler()
+            camera_handler = self.handlers.camera
             for event in pygame.event.get():
-
                 control_event = self.event_checker.check(event)
-                if control_event.type == ControlEventTypes.SCROLL:
-                    self.handle_scroll(control_event)
+                camera_handler.handle(control_event)
+                game_handler.handle(control_event)
 
                 if control_event.mouse_motion:
                     self.handle_mouse_motion(control_event)
@@ -65,11 +70,6 @@ class GameLoop:
                 if control_event.type == ControlEventTypes.MOUSE_MAIN_UP:
                     self.handle_main_mouse_up(control_event)
 
-                if control_event.type == ControlEventTypes.MOUSE_MIDDLE_DOWN:
-                    self.handle_middle_mouse_down(control_event)
-
-                if control_event.type == ControlEventTypes.MOUSE_MIDDLE_UP:
-                    self.handle_middle_mouse_up(control_event)
 
 
                 if control_event.type == ControlEventTypes.MOUSE_SEC_UP:
@@ -107,11 +107,13 @@ class GameLoop:
             for obj in self.gamedata.objects:
                 if obj.check_point(event.pos) and self.check_draggable(obj):
                     # pygame.mouse.set_visible(False)
-                    obj.dragging = True
-                    self.dragged_obj = obj
+                    self.set_dragging_obj(obj)
                     data = DragData(obj, start_pos=obj.position, start_pos_z=obj.position_z)
                     self.current_action = Action(ActionTypes.DRAGGING_MODEL, data)
-                    self.interface.elements.dragging_lines.append(obj.make_dragging_line(GREEN, obj.position))
+                    obj.make_dragging_line(GREEN, obj.position)
+                    obj.make_move_line(GREEN, obj.position)
+                    self.interface.elements.temp.extend(obj.make_move_borders(GREEN, obj.position))
+                    self.interface.elements.temp.append(obj.make_footprint(GREEN))
                     break
             else:
                 pass
@@ -122,7 +124,9 @@ class GameLoop:
             if self.current_action.type == ActionTypes.DRAGGING_MODEL:
                 # pygame.mouse.set_visible(True)
                 self.dragged_obj.dragging = False
-                self.interface.elements.dragging_lines.remove(self.dragged_obj.last_dragging_line)
+                self.interface.elements.temp.remove(self.dragged_obj.last_footprint)
+                for border in self.dragged_obj.last_move_borders:
+                    self.interface.elements.temp.remove(border)
                 self.current_action.data.end_pos = self.dragged_obj.position
                 self.current_action.data.end_pos_z = self.dragged_obj.position_z
                 self.current_action.complete = True
@@ -136,13 +140,13 @@ class GameLoop:
         if self.check_mouse_inside(new_screen_pos) and self.current_action:
             if self.current_action.type == ActionTypes.DRAGGING_MODEL:
                 self.logic.set_dragged_obj_position(event.pos)
-                if not self.logic.check_move_length(self.dragged_obj):
-                    self.logic.set_with_available_move(self.dragged_obj)
-                self.logic.set_with_noncollide_position(
-                    self.dragged_obj,
-                    event.pos,
+                self.dragged_obj.noncollide_pos_simple(
                     self.gamedata.objects,
                 )
+                self.dragged_obj.last_move_line.set_pos(self.dragged_obj.position)
+                self.dragged_obj.correct_move_borders()
+
+
 
             elif self.current_action.type == ActionTypes.DRAGGING_CAMERA:
                 self.camera.drag(new_screen_pos)
@@ -179,10 +183,28 @@ class GameLoop:
 
     def check_draggable(self, obj: BaseObject):
         current_player = self.player_profile
-        print(type(self.player_act))
         player_act = self.player_act.player_profile
         obj_owner = obj.owner.player_profile
         if current_player is player_act and obj_owner is current_player:
             return True
         return False
 
+    def set_dragging_obj(self, obj):
+        obj.dragging = True
+        self.dragged_obj = obj
+
+    def choose_handler(self):
+        state = self.gamedata.game_state
+        if state.name == GAME_STATE_NAMES.BATTLE:
+            if state.battle_phase == BATTLE_PHASE_NAMES.COMMAND:
+                return self.handlers.command
+            if state.battle_phase == BATTLE_PHASE_NAMES.MOVE:
+                return self.handlers.move
+            if state.battle_phase == BATTLE_PHASE_NAMES.SHOOT:
+                return self.handlers.shoot
+            if state.battle_phase == BATTLE_PHASE_NAMES.CHARGE:
+                return self.handlers.charge
+            if state.battle_phase == BATTLE_PHASE_NAMES.FIGHT:
+                return self.handlers.fight
+        if state.name == GAME_STATE_NAMES.INITIAL:
+            return self.handlers.initial

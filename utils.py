@@ -50,7 +50,7 @@ def distance_w(a_pos, b_pos, c_pos):
 def dot(vA, vB):
     return vA[0]*vB[0]+vA[1]*vB[1]
 
-def ang(vA: tuple[float, float], vB: tuple[float, float]):
+def ang(vA: tuple[float, float], vB: tuple[float, float], full=False):
     dot_prod = dot(vA, vB)
     magA = dot(vA, vA)**0.5 + 0.00001
     magB = dot(vB, vB)**0.5 + 0.00001
@@ -63,6 +63,15 @@ def ang(vA: tuple[float, float], vB: tuple[float, float]):
         return angle
 
 
+def ang_alt(vA: tuple[float, float]):
+    ret = math.atan2(*vA) + math.pi / 2
+    return ret
+
+
+def slope(v: tuple[float, float]):
+    x, y = v
+    return y/x
+
 def find_angle(A: 'Line', B: 'Line'):
     vA = A.vector
     vB = B.vector
@@ -71,9 +80,9 @@ def find_angle(A: 'Line', B: 'Line'):
 
 
 def check_intersection(A: 'Line', B: 'Line'):
-    ax1, ay1 = A.start
+    ax1, ay1 = A.position
     ax2, ay2 = A.end
-    bx1, by1 = B.start
+    bx1, by1 = B.position
     bx2, by2 = B.end
     v1 = (bx2-bx1) * (ay1-by1) - (by2-by1) * (ax1-bx1)
     v2 = (bx2-bx1) * (ay2-by1) - (by2-by1) * (ax2-bx1)

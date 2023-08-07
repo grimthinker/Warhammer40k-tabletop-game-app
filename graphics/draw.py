@@ -24,7 +24,7 @@ class DrawingMaker:
             pygame.draw.circle(screen, obj.color, position, size, obj.line_wide)
 
         if isinstance(obj, Line):
-            start = to_screen_scale(obj.start, scale, *camera.pos, camera.angle)
+            start = to_screen_scale(obj.position, scale, *camera.pos, camera.angle)
             end = to_screen_scale(obj.end, scale, *camera.pos, camera.angle)
             pygame.draw.line(
                 screen,

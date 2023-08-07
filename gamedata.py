@@ -54,13 +54,13 @@ class Player:
 class GameState:
     def __init__(self):
         self.player_act: Player | None = None
-        self.state: GAME_STATE_NAMES = GAME_STATE_NAMES.INITIAL
-        self.battle_state: BattleState = BattleState()
+        self.name: GAME_STATE_NAMES = GAME_STATE_NAMES.INITIAL
+        self.battle_phase: BattleState = BattleState()
 
 
 class BattleState:
     def __init__(self):
-        self.state: BATTLE_PHASE_NAMES = BATTLE_PHASE_NAMES.NONE
+        self.name: BATTLE_PHASE_NAMES = BATTLE_PHASE_NAMES.NONE
         self.turn_number: int = 0
 
 

@@ -13,11 +13,11 @@ class GameInterface:
 
 @dataclass
 class InterfaceElements:
-    dragging_lines: list = field(default_factory=list)
+    temp: list = field(default_factory=list)
     move_lines: list = field(default_factory=list)
     interactive: list = field(default_factory=list)
 
     @property
     def all(self):
-        return self.interactive + self.dragging_lines + self.move_lines
+        return self.interactive + self.temp + self.move_lines
 
