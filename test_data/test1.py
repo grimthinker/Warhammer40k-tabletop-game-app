@@ -9,21 +9,20 @@ from basic_data.source import BLUE
 
 player_profile1 = PlayerProfile('Neash')
 
-index1 = ModelProfile(base_diameter=0.5)
-index2 = ModelProfile(base_diameter=1.5, passable=True)
-data1 = ModelData()
-data2 = ModelData()
-model = GameModel(index1, data=data1, position=(4, 4))
+index1 = ModelProfile(base_diameter=0.5, passable=True)
+index2 = ModelProfile(base_diameter=1.5, passable=False)
+models = [ModelData(index1) for _ in range(5)]
+data2 = ModelData(index2)
+unit_models = [GameModel(index1, data=ModelData(index1), position=(4, x)) for x in range(4, 14, 3)]
 model2 = GameModel(index2, data=data2, position=(7.625, 6.125))
 
-test_map = GameMap(size=(16, 12), terrain=[])
+test_map = GameMap(size=(26, 22), terrain=[])
 
-models = [model, model2]  # game models
 
-unit1 = GameUnit(models)
-unit2 = GameUnit([])
+unit1 = GameUnit(unit_models)
+unit2 = GameUnit([model2])
 
-player1 = Player(player_profile=player_profile1, team=1, units=[unit1])
+player1 = Player(player_profile=player_profile1, team=1, units=[unit1, unit2])
 state = GameState()
 state.player_act = player1
 settings = GameSettings(GAME_SETTINGS_MODE.SINGLE)

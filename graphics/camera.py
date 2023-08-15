@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 class GameCamera:
     def __init__(
             self,
-            scale: float = 40,
+            scale: float = 20,
             pos: tuple[float, float] = (-10, -10),
-            angle: float = 50,
+            angle: float = 0,
             position_z: int = 0
     ):
         self.scale = scale

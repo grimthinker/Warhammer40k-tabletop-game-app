@@ -80,14 +80,23 @@ class ModelProfile:
     can_be_stood_on: bool = False
 
 
-@dataclass
 class ModelData:
-    M: int = 6  # Current Move
-    T: int = 1  # Current Toughness
-    Sv: int = 6  # Current Save
-    W: int = 1  # Current Wounds
-    LD: int = 1  # Current Leadership
-    OK: int = 1  # Current Objective control
-    ranged_weapons: list[RangeWeaponData] = field(default_factory=list)  # Current Weapons
-    melee_weapons: list[MeleeWeaponData] = field(default_factory=list)
-    wargear: str | None = None  # Current wargear
+    def __init__(
+            self,
+            profile: ModelProfile,
+            ranged_weapons: list[RangeWeaponData] | None = None,
+            melee_weapons: list[MeleeWeaponData] | None = None,
+            wargear: str | None = None,
+            enhancement: str | None = None
+    ):
+        self.M = profile.M
+        self.T = profile.T
+        self.Sv = profile.Sv
+        self.W = profile.W
+        self.LD = profile.LD
+        self.OK = profile.OK
+        self.ranged_weapons = ranged_weapons if ranged_weapons else list()
+        self.melee_weapons = melee_weapons if melee_weapons else list()
+        self.enhancement = enhancement
+        self.wargear = wargear
+

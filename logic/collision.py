@@ -63,7 +63,7 @@ class CollisionMixin(BaseObject):
             self.set_corrected_pos_all(self.model.data.M)
 
         min_not_passing_move = self.find_not_passing_move(objects, curr_move, down=True)
-        max_not_passing_move = self.find_not_passing_move(objects, curr_move, down=False)
+        max_not_passing_move = self.find_not_passing_move(objects, 0, down=False)
         max_available_move = min(self.model.data.M, max_not_passing_move)
         self.set_corrected_pos_all(min_not_passing_move)
         curr_move = self.last_dragging_line.length
@@ -124,7 +124,6 @@ class CollisionMixin(BaseObject):
             _line = Line(position=0, start=self.last_dragging_line.position, end=collided_object.position)
             _cos = math.cos(find_angle(self.last_dragging_line, _line))
             _x = _line.length * _cos
-            print(_x, required_move)
             if _x <= required_move and proposed_move <= correct_length:
                 return True
             else:
