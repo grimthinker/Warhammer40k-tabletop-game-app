@@ -10,7 +10,7 @@ from basic_data.source import BLUE
 player_profile1 = PlayerProfile('Neash')
 
 index1 = ModelProfile(base_diameter=0.5)
-index2 = ModelProfile(base_diameter=1.5)
+index2 = ModelProfile(base_diameter=1.5, passable=True)
 data1 = ModelData()
 data2 = ModelData()
 model = GameModel(index1, data=data1, position=(4, 4))

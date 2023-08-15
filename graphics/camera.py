@@ -29,18 +29,14 @@ class GameCamera:
     def zoom(self, event: ControlEvent, speed_mult: float = ZOOM_SPEED):
 
         center_pos = event.mouse_pos
-        # old center real pos
         cx, cy = to_real_scale(center_pos, self.scale, *self.pos, self.angle)
         if event.data == 1:
             self.scale *= (SCALE_MOVE_UP * speed_mult)
         elif event.data == -1:
             self.scale *= (SCALE_MOVE_DOWN / speed_mult)
-        # new offset real pos
         nox, noy = to_real_scale(self.pos, self.scale, *self.pos, self.angle)
-        # new center real pos
         ncx, ncy = to_real_scale(center_pos, self.scale, *self.pos, self.angle)
         dx, dy = ncx - nox, ncy - noy
-        # required offset real pos
         rox, roy = cx - dx, cy - dy
         self.pos = to_screen_scale((rox, roy), self.scale, *self.pos, self.angle)
 
@@ -58,10 +54,8 @@ class GameCamera:
         self.rotate_zero = event.mouse_pos[0]
         self.angle += dx
         nox, noy = to_real_scale(self.pos, self.scale, *self.pos, self.angle)
-        # new center real pos
         ncx, ncy = to_real_scale(self.rotate_anchor, self.scale, *self.pos, self.angle)
         dx, dy = ncx - nox, ncy - noy
-        # required offset real pos
         rox, roy = cx - dx, cy - dy
         self.pos = to_screen_scale((rox, roy), self.scale, *self.pos, self.angle)
 

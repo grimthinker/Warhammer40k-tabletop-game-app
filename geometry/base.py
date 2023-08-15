@@ -16,7 +16,8 @@ class BaseObject:
             position_z: int = 0,
             line_wide: int = 1,
             model: 'GameModel | TerrainModel | None' = None,
-            size: float = 0
+            size: float = 0,
+            moving_object = None
     ):
         self.color = color
         self.position = position
@@ -27,8 +28,9 @@ class BaseObject:
         self.dragging_lines: list[Line] = list()
         self.move_lines: list[Line] = list()
         self.move_borders: list[tuple[Line, Line]] = list()
+        self.moving_object = moving_object
         self.footprints: list[BaseObject] = list()
-        self.to_draw = True
+        self.show = True
         self.size = size
 
     @property
@@ -41,7 +43,7 @@ class BaseObject:
 
     @property
     def last_move_borders(self):
-        return self.move_borders[-1] if self.move_borders else None
+        return self.move_borders[-1] if self.move_borders else (None, None)
 
     @property
     def last_footprint(self):

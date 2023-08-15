@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from basic_data.source import ORANGE
+from logic.collision import CollisionMixin
 from utils import distance_w
 
 if TYPE_CHECKING:
@@ -24,24 +26,6 @@ class GameLogic:
         return available_move >= length
 
 
-    def find_collided(self, obj):
-        collided = []
-        for another_obj in self.loop.gamedata.objects:
-            if another_obj == obj or another_obj == obj.last_dragging_line:
-                continue
-            collision, distance = obj.check_collision(another_obj)
-            if collision:
-                collided.append([another_obj, distance])
-        return collided
-
-
-    def set_with_available_move(self, dragged_obj):
-        available_pos = dragged_obj.correct_length_move()
-        self.loop.dragged_obj.set_pos(available_pos, use_offset=False)
-        self.loop.dragged_obj.last_dragging_line.set_pos(available_pos, use_offset=False)
-
-
-
     def set_with_noncollide_position(
             self,
             dragged_obj,
@@ -52,9 +36,6 @@ class GameLogic:
 
 
 
-    def set_dragged_obj_position(self, pos):
-        self.loop.dragged_obj.set_pos(pos, use_offset=True)
-        self.loop.dragged_obj.last_dragging_line.set_pos(self.loop.dragged_obj.position)
 
 
 

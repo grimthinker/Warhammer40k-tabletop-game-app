@@ -139,12 +139,11 @@ class GameLoop:
         new_screen_pos = to_screen_scale(event.pos, self.camera.scale, *self.camera.pos, self.camera.angle)
         if self.check_mouse_inside(new_screen_pos) and self.current_action:
             if self.current_action.type == ActionTypes.DRAGGING_MODEL:
-                self.logic.set_dragged_obj_position(event.pos)
-                self.dragged_obj.noncollide_pos_simple(
+                self.dragged_obj.noncollide_pos_simplest(
+                    event.pos,
                     self.gamedata.objects,
+                    True
                 )
-                self.dragged_obj.last_move_line.set_pos(self.dragged_obj.position)
-                self.dragged_obj.correct_move_borders()
 
 
 
@@ -153,7 +152,7 @@ class GameLoop:
             elif self.current_action.type == ActionTypes.ROTATING_CAMERA:
                 size = self.screen.get_size()
                 rot_center = [size[0]/2, size[1]*5/6]
-                self.camera.rotate(event, rot_center)
+                self.camera.rotate(event)
 
     def handle_middle_mouse_down(self, event):
         if not self.current_action:

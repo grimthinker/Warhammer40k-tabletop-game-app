@@ -39,12 +39,26 @@ def distance_w(a_pos, b_pos, c_pos):
     ax, ay = a_pos
     bx, by = b_pos
     x, y = c_pos
-    value = ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax)**2 + (by - ay)**2)
+    value = ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax)**2 + (by - ay)**2 + 0.0000001)
     if value < 0:
         value = 0
     elif value > 1:
         value = 1
     return math.hypot(ax - x + (bx - ax) * value, ay - y + (by - ay) * value)
+
+
+def ccw(A, B, C):
+    ax, ay = A
+    bx, by = B
+    cx, cy = C
+    return (cy - ay) * (bx - ax) > (by - ay) * (cx - ax)
+
+
+def segments_intersect(segmentA, segmentB):
+    return ccw(segmentA.position, segmentB.position, segmentB.end) != \
+           ccw(segmentA.end, segmentB.position, segmentB.end) and \
+           ccw(segmentA.position, segmentA.end, segmentB.position) != \
+           ccw(segmentA.position, segmentA.end, segmentB.end)
 
 
 def dot(vA, vB):
