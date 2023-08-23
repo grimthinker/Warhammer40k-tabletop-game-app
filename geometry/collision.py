@@ -1,7 +1,7 @@
 import math
 
 from geometry.base import Line, Circle, Rectangle
-from logic.collision import CollisionMixin
+from logic.collision.collision import CollisionMixin
 from utils import ang
 
 

@@ -13,8 +13,10 @@ class BasicModel:
     def __init__(
         self,
         profile: ModelProfile | TerrainProfile | None = None,
+        effects: list | None = None,
     ):
         self.profile = profile
+        self.effects = effects if effects else list()
         self.draggable = False
         self.owner: Player | None = None
         self.geometry: 'CollisionMixin | None' = None

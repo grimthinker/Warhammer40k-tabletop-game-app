@@ -55,7 +55,7 @@ class GameState:
     def __init__(self):
         self.player_act: Player | None = None
         self.name: GAME_STATE_NAMES = GAME_STATE_NAMES.INITIAL
-        self.battle_phase: BattleState = BattleState()
+        self.battle_state: BattleState = BattleState()
 
 
 class BattleState:

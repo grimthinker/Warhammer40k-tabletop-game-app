@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 
+from logic.classes import DInt
+
 
 @dataclass
 class AbilityProfile:
@@ -8,16 +10,16 @@ class AbilityProfile:
 
 @dataclass
 class WeaponBase:
-    A: int = 1  # Attacks
+    A: int | DInt = 1  # Attacks
     S: int = 1  # Strength
     AP: int = 0  # Armour penetration
-    D: int = 1  # Damage
+    D: int | DInt = 1  # Damage
     use_limit: int | None = None
 
 
 @dataclass
 class RangedWeapon(WeaponBase):
-    R: int = 1  # Range
+    R: int | DInt = 1  # Range
     BS: int = 1  # Ballistic skill
 
 
@@ -27,7 +29,7 @@ class MeleeWeapon(WeaponBase):
 
 
 @dataclass
-class RangeWeaponData(RangedWeapon):
+class RangedWeaponData(RangedWeapon):
     use_number: int = 0
 
 
@@ -38,6 +40,12 @@ class MeleeWeaponData(MeleeWeapon):
 
 class Rule:
     pass
+
+
+@dataclass
+class Ability:
+    tags: list[str] = field(default_factory=list)
+    FNP: int | None = None
 
 
 @dataclass
@@ -66,7 +74,7 @@ class ModelProfile:
     OK: int = 1  # Objective control
     ranged_weapons: list[RangedWeapon] = field(default_factory=list)
     melee_weapons: list[MeleeWeapon] = field(default_factory=list)
-    abilities: list[str] = field(default_factory=list)
+    abilities: list[Ability] = field(default_factory=list)
     keywords: list[str] = field(default_factory=list)
     faction_keywords: list[str] = field(default_factory=list)
     wargear_options: list[str] = field(default_factory=list)
@@ -84,7 +92,7 @@ class ModelData:
     def __init__(
             self,
             profile: ModelProfile,
-            ranged_weapons: list[RangeWeaponData] | None = None,
+            ranged_weapons: list[RangedWeaponData] | None = None,
             melee_weapons: list[MeleeWeaponData] | None = None,
             wargear: str | None = None,
             enhancement: str | None = None

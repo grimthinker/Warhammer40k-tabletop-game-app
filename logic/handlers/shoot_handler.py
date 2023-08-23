@@ -1,4 +1,6 @@
+from logic.classes import DInt
 from logic.handlers.base import BaseHandler
+from models.profile import RangedWeapon, MeleeWeapon, ModelProfile
 
 
 class ShootHandler(BaseHandler):
@@ -8,3 +10,4 @@ class ShootHandler(BaseHandler):
 
     def handle(self, event):
         pass
+

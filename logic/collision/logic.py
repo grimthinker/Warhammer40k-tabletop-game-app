@@ -1,8 +1,5 @@
 from typing import TYPE_CHECKING
 
-from basic_data.source import ORANGE
-from logic.collision import CollisionMixin
-from utils import distance_w
 
 if TYPE_CHECKING:
     from main import GameLoop

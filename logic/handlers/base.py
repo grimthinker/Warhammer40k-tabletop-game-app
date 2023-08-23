@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 class BaseHandler:
     def __init__(self, game_loop: 'GameLoop'):
         self.loop = game_loop
+        self.camera = game_loop.camera
         self.current_action: Action | None = None
         self.actions = []
 
